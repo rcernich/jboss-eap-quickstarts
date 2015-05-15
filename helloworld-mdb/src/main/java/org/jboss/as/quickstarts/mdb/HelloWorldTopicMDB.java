@@ -24,6 +24,8 @@ import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
 
+import org.jboss.ejb3.annotation.ResourceAdapter;
+
 /**
  * <p>
  * A simple Message Driven Bean that asynchronously receives and processes the messages that are sent to the topic.
@@ -34,8 +36,9 @@ import javax.jms.TextMessage;
  */
 @MessageDriven(name = "HelloWorldQTopicMDB", activationConfig = {
         @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Topic"),
-        @ActivationConfigProperty(propertyName = "destination", propertyValue = "topic/HELLOWORLDMDBTopic"),
+        @ActivationConfigProperty(propertyName = "destination", propertyValue = "HELLOWORLDMDBTopic"),
         @ActivationConfigProperty(propertyName = "acknowledgeMode", propertyValue = "Auto-acknowledge") })
+@ResourceAdapter(value="activemq-rar.rar")
 public class HelloWorldTopicMDB implements MessageListener {
 
     private final static Logger LOGGER = Logger.getLogger(HelloWorldTopicMDB.class.toString());
