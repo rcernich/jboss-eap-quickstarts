@@ -24,11 +24,22 @@
 <!--    <engine>  -->
 <!--       <property name="deploymentExportPath">target/</property>  -->
 <!--    </engine> -->
-
    <!-- Force the use of the Servlet 3.0 protocol with all containers, as it is the most mature -->
    <defaultProtocol type="Servlet 3.0" />
 
-     <!-- Example configuration for a remote JBoss EAP 6 instance -->
+   <!-- Example configuration for arquillian openshift extension -->
+   <extension qualifier="openshift">
+        <!-- Properties describing the location of the OpenShift instance.
+        <property name="originServer">https://your-ose-instance.com:8443</property>
+        <property name="namespace">test-namespace</property>
+        -->
+        <!-- The file containing the pod definition.  Used to instantiate the JBoss instance. -->
+        <property name="definitionsFile">src/test/resources/jboss-pod.json</property>
+        <!-- Ports to be proxied locally, <container>:<port> -->
+        <property name="proxiedContainerPorts">jboss:9999,jboss:9990,jboss:8080</property>
+   </extension>
+
+   <!-- Example configuration for a remote JBoss EAP 6 instance -->
    <container qualifier="jboss" default="true">
         <!-- By default, arquillian will use the JBOSS_HOME environment variable.  Alternatively, the configuration below can be uncommented. -->
         <!--<configuration> -->

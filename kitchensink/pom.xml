@@ -272,6 +272,73 @@
         </profile>
 
         <profile>
+            <!-- An optional Arquillian testing profile that executes tests in a remote 
+                JBoss EAP instance running on OpenShift-->
+            <!-- Run with: mvn clean test -Parq-jbossas-openshift -Dopenshift.originServer=<origin-master> -Dopenshift.namespace=<test-namespace> -->
+            <id>arq-jbossas-openshift</id>
+
+            <properties>
+                <version.org.jboss.arquillian>1.1.10.Final</version.org.jboss.arquillian>
+                <version.arquillian.cube>1.0.0.Final-SNAPSHOT</version.arquillian.cube>
+                <openshift.originServer>https://localhost:8443</openshift.originServer>
+                <openshift.namespace>test</openshift.namespace>
+            </properties>
+
+            <dependencyManagement>
+                <dependencies>
+                    <!-- Using a newer version of arquillian -->
+                    <dependency>
+                        <groupId>org.jboss.arquillian</groupId>
+                        <artifactId>arquillian-bom</artifactId>
+                        <version>${version.org.jboss.arquillian}</version>
+                        <type>pom</type>
+                        <scope>import</scope>
+                    </dependency>
+
+                    <dependency>
+                        <groupId>org.arquillian.cube</groupId>
+                        <artifactId>arquillian-cube-parent</artifactId>
+                        <version>${version.arquillian.cube}</version>
+                        <type>pom</type>
+                        <scope>import</scope>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
+
+            <dependencies>
+                <dependency>
+                    <groupId>org.arquillian.cube</groupId>
+                    <artifactId>arquillian-cube-openshift</artifactId>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.jboss.as</groupId>
+                    <artifactId>jboss-as-arquillian-container-remote</artifactId>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>${version.surefire.plugin}</version>
+                        <configuration>
+                            <systemPropertyVariables>
+                                <!-- Need uid/pwd for the test container.  This matches what is in the jboss-pod.json file. -->
+                                <arq.container.jboss.configuration.username>admin</arq.container.jboss.configuration.username>
+                                <arq.container.jboss.configuration.password>Admin#70365</arq.container.jboss.configuration.password>
+                                <!-- Need to specify OpenShift details -->
+                                <arq.extension.openshift.originServer>${openshift.originServer}</arq.extension.openshift.originServer>
+                                <arq.extension.openshift.namespace>${openshift.namespace}</arq.extension.openshift.namespace>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
             <!-- When built in OpenShift the 'openshift' profile will be used when 
                 invoking mvn. -->
             <!-- Use this profile for any OpenShift specific customization your app 
@@ -280,6 +347,7 @@
                 folder. -->
             <!-- http://maven.apache.org/guides/mini/guide-building-for-different-environments.html -->
             <id>openshift</id>
+
             <build>
                 <plugins>
                     <plugin>
